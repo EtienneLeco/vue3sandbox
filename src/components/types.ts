@@ -1,0 +1,1 @@
+export type Impact = "low" | "medium" | "high";
