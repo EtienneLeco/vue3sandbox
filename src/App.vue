@@ -1,18 +1,23 @@
 <script setup lang="ts">
-  import { ref } from "vue";
+    import PluggableContainer from './components/PluggableContainer.vue';
 
-  import ButtonRegular from "./components/ButtonRegular.vue";
-
-  const ticked = ref(false);
 </script>
 
 <template>
-    <ButtonRegular
-        title="A nice title"
-        :impact="ticked ? 'low' : 'medium'"
-    >
-      <div>Click me</div>
-    </ButtonRegular>
+    <h1>Core Product</h1>
 
-    <input type="checkbox" v-model="ticked">
+    <PluggableContainer anchor="customArticle" :context="{ resourceName: 'a very nice article' }">
+      <div>
+        <p>This is a customizable article. Feel free to override it</p>
+      </div>
+    </PluggableContainer>
+
+    <hr />
+
+    <PluggableContainer anchor="customImage">
+      <div>
+        <img src="https://picsum.photos/300/200" alt="random image">
+        <legend>This is a customizable image</legend>
+      </div>
+    </PluggableContainer>
 </template>

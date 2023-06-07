@@ -1,13 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import vuescroll from 'vuescroll';
+import { setupPlugins } from './plugins';
 
 const app = createApp(App);
-
-app.use(vuescroll, {
-    name: 'vuescroll'
-});
+setupPlugins(app);
 
 app.mount('#app');
-
