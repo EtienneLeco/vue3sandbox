@@ -463,8 +463,3 @@ vue@^3.2.41:
     "@vue/runtime-dom" "3.2.41"
     "@vue/server-renderer" "3.2.41"
     "@vue/shared" "3.2.41"
-
-vuescroll@5.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/vuescroll/-/vuescroll-5.0.1.tgz#3fb679da16b154eda1849a856f4f88f3183dc5ab"
-  integrity sha512-w8FBwkZE9gqLpWUtcL3K4PVsda9ut+Cip1jBnu5g83cq+KS0FvQi3vOJaskMxp/X1tJXjkHTIu2ybfLlMUTJHw==
