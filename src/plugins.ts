@@ -1,46 +1,35 @@
-import { App, h, render } from "vue";
-import type { Plugin, PluginGlobalContext, PluginId } from "./types";
+import type { App } from "vue";
+import type { Plugin, PluginId } from "./types";
 
-export function setupPlugins(app: App<Element>) {
-    const plugins = loadPlugins(buildGlobalContext());
-    const pluginMap = getPluginMap(plugins);
+const pluginMap = new Map<string, Plugin>();
+
+export async function setupPlugins(app: App<Element>) {
+    setupPluginAPI();
+    try {
+        await loadPlugins();
+    } catch (e) {
+        console.log("Unable to load plugin");
+    }
 
     app.provide('getPlugin', (pluginId: PluginId) => {
+        console.log("get plugin", pluginId);
         if (! pluginMap.has(pluginId)) { return null; }
 
         return pluginMap.get(pluginId);
     });
 }
 
-function loadPlugins(globalContext: PluginGlobalContext): Plugin[] {
-    // load plugin
-    return [{
-        id: "customArticle",
-        render(element: HTMLElement, context: any) {
-            const pluginVNode = h("div", {
-                class: "plugin-class",
-                innerHTML: `<h1>Hello ${globalContext.dataAPI.getUser().firstName}</h1>
-                <p>You are reading ${context.resourceName} from a plugin</p>
-                <button type="button" onclick="document.getElementById('modal').showModal()">Click to open a popup</button>
-                <dialog id="modal">
-                    <p>Can you close me ?</p>
-                    <form method="dialog">
-                        <button>Yes I can</button>
-                    </form>
-                </dialog>`
-            });
-            render(pluginVNode, element);
-        }
-    }];
+async function loadPlugins() {
+    await loadJSFile("/src/plugin-manifesto.js");
 }
 
-function getPluginMap(plugins: Plugin[]): Map<string, Plugin> {
-    return new Map<string, Plugin>(plugins.map((item: Plugin) => [item.id, item]));
-}
-
-function buildGlobalContext() {
-    return {
-        dataAPI: {
+function setupPluginAPI() {
+    window.pluginAPI = {
+        registerPlugin(plugin: Plugin) {
+            console.log("here in plugin", plugin);
+            pluginMap.set(plugin.id, plugin);
+        },
+        dataServices: {
             getCompany() {
                 return {
                     id: "",
@@ -55,5 +44,23 @@ function buildGlobalContext() {
                 };
             }
         }
-    } as PluginGlobalContext;
+    };
+}
+
+async function loadJSFile(src: string) {
+    return new Promise<void>((resolve, reject) => {
+        const element = document.createElement("script");
+
+        element.setAttribute("src", src);
+        element.setAttribute("type", "text/javascript");
+        element.setAttribute("async", "false");
+
+        document.body.appendChild(element);
+
+        element.addEventListener("load", () => {
+            resolve();
+        });
+
+        element.addEventListener("error", reject);
+    });
 }
